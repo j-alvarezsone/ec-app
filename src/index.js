@@ -3,10 +3,23 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+// redux
+import { Provider } from 'react-redux';
+import createStore from './redux/store/store';
+
+import { ConnectedRouter } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
+
+let history = createBrowserHistory();
+export const store = createStore(history);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <App />
+      </ConnectedRouter>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
