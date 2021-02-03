@@ -4,6 +4,7 @@ import { TextInput, PrimaryButton } from '../components/UIkit';
 // redux
 import { signUp } from '../redux/users/operations';
 import { useDispatch } from 'react-redux';
+import { push } from 'connected-react-router';
 const SignUp = () => {
   const [username, setUsername] = useState(''),
     [email, setEmail] = useState(''),
@@ -89,6 +90,8 @@ const SignUp = () => {
             dispatch(signUp(username, email, password, confirmPassword))
           }
         />
+        <div className='module-spacer--medium' />
+        <p onClick={() => dispatch(push('/signin'))}>Already have an account</p>
       </div>
     </div>
   );

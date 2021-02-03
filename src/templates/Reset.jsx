@@ -2,12 +2,11 @@ import React, { useState, useCallback } from 'react';
 // component
 import { TextInput, PrimaryButton } from '../components/UIkit';
 // redux
-import { signIn } from '../redux/users/operations';
+import { resetPassword } from '../redux/users/operations';
 import { useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-const SignIn = () => {
-  const [email, setEmail] = useState(''),
-    [password, setPassword] = useState('');
+const Reset = () => {
+  const [email, setEmail] = useState('');
 
   const inputEmail = useCallback(
     (e) => {
@@ -15,18 +14,12 @@ const SignIn = () => {
     },
     [setEmail]
   );
-  const inputPassword = useCallback(
-    (e) => {
-      setPassword(e.target.value);
-    },
-    [setPassword]
-  );
 
   const dispatch = useDispatch();
 
   return (
     <div className='c-section-container'>
-      <h2 className='u-text__headline u-text-center'>Sign In</h2>
+      <h2 className='u-text__headline u-text-center'>Password Reset</h2>
       <div className='module-spacer--medium' />
       <TextInput
         fullWidth={true}
@@ -38,32 +31,20 @@ const SignIn = () => {
         type={'email'}
         onChange={inputEmail}
       />
-      <TextInput
-        fullWidth={true}
-        label={'password'}
-        multiline={false}
-        required={true}
-        rows={1}
-        value={password}
-        type={'password'}
-        onChange={inputPassword}
-      />
+
       <div className='module-spacer--medium' />
       <div className='center'>
         <PrimaryButton
-          label={'Sign In'}
-          onClick={() => dispatch(signIn(email, password))}
+          label={'Reset password'}
+          onClick={() => dispatch(resetPassword(email))}
         />
         <div className='module-spacer--medium' />
-        <p onClick={() => dispatch(push('/signup'))}>
-          Who do not have an account
-        </p>
-        <p onClick={() => dispatch(push('/signin/reset'))}>
-          Who have forgotten your password
+        <p onClick={() => dispatch(push('/signin'))}>
+          Return to the login page
         </p>
       </div>
     </div>
   );
 };
 
-export default SignIn;
+export default Reset;
