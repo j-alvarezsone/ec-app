@@ -101,6 +101,7 @@
   left: 0;
   width: 100%;
   height: auto;
+  cursor: pointer;
 }
 
 /*********** Footer ***********/
@@ -138,7 +139,7 @@
 }
 
 .u-text__headline {
-  color: #4dd0e1;
+  color: #000;
   font-size: 1.563rem;
   margin: 0 auto 1rem auto;
 }

@@ -1,16 +1,43 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { TextInput, SelectBox, PrimaryButton } from '../components/UIkit/';
 import { useDispatch } from 'react-redux';
 import { saveProducts } from '../redux/products/operations';
-
+import ImageArea from '../components/Products/ImageArea';
+import { db } from '../firebase/index';
+import { SetSizesArea } from '../components/Products';
 const ProductEdit = () => {
+  const dispatch = useDispatch();
+  let id = window.location.pathname.split('/product/edit')[1];
+
+  if (id !== '') {
+    id = id.split('/')[1];
+  }
+
   const [name, setName] = useState(''),
     [description, setDescription] = useState(''),
     [category, setCategory] = useState(''),
     [gender, setGender] = useState(''),
-    [price, setPrice] = useState('');
+    [images, setImages] = useState([]),
+    [price, setPrice] = useState(''),
+    [sizes, setSizes] = useState([]);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (id !== '') {
+      db.collection('products')
+        .doc(id)
+        .get('products')
+        .then((snapshot) => {
+          const data = snapshot.data();
+          setImages(data.images);
+          setName(data.name);
+          setDescription(data.description);
+          setCategory(data.category);
+          setPrice(data.price);
+          setGender(data.gender);
+          setSizes(data.sizes);
+        });
+    }
+  }, [id]);
 
   const inputName = useCallback(
     (e) => {
@@ -51,6 +78,7 @@ const ProductEdit = () => {
         Product registration and editing
       </h2>
       <div className='c-section-container'>
+        <ImageArea images={images} setImages={setImages} />
         <TextInput
           fullWidth={true}
           label={'Product name'}
@@ -95,12 +123,25 @@ const ProductEdit = () => {
           value={price}
           type={'number'}
         />
-        <div className='module-spacer--medium' />
+        <div className='module-spacer--small' />
+        <SetSizesArea sizes={sizes} setSizes={setSizes} />
+        <div className='module-spacer--small' />
         <div className='center'>
           <PrimaryButton
             label={'Save'}
             onClick={() =>
-              dispatch(saveProducts(name, description, category, gender, price))
+              dispatch(
+                saveProducts(
+                  name,
+                  description,
+                  category,
+                  gender,
+                  price,
+                  images,
+                  id,
+                  sizes
+                )
+              )
             }
           />
         </div>
