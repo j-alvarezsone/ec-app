@@ -1,5 +1,6 @@
 import { push } from 'connected-react-router';
 import { db, FirebaseTimestamp } from '../../firebase/';
+import { deleteProductAction, fetchProductsAction } from './actions';
 
 const productRef = db.collection('products');
 export const saveProducts = (
@@ -41,6 +42,38 @@ export const saveProducts = (
       })
       .catch((err) => {
         throw new Error(err);
+      });
+  };
+};
+
+export const fetchProducts = () => {
+  // orderBy() will sort the type of query
+  return async (dispatch) => {
+    productRef
+      .orderBy('updated_at', 'desc')
+      .get()
+      .then((snapshots) => {
+        const productList = [];
+        snapshots.forEach((snapshot) => {
+          const product = snapshot.data();
+          productList.push(product);
+        });
+        dispatch(fetchProductsAction(productList));
+      });
+  };
+};
+
+export const deleteProduct = (id) => {
+  return async (dispatch, getState) => {
+    productRef
+      .doc(id)
+      .delete()
+      .then(() => {
+        const prevProducts = getState().products.list;
+        const nextProducts = prevProducts.filter(
+          (product) => product.id !== id
+        );
+        dispatch(deleteProductAction(nextProducts));
       });
   };
 };

@@ -2,6 +2,7 @@ import { signInAction, signOutAction } from './actions';
 import { push } from 'connected-react-router';
 import { auth, FirebaseTimestamp, db } from '../../firebase/index';
 
+// check if is sign in
 export const listenAuthState = () => {
   return async (dispatch) => {
     return auth.onAuthStateChanged((user) => {
@@ -133,7 +134,7 @@ export const resetPassword = (email) => {
         })
         .catch(() => {
           alert(
-            'This is a ,ail address that has not been registered. Please check it once.'
+            'This is a , fail address that has not been registered. Please check it once.'
           );
         });
     }
