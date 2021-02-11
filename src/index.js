@@ -8,6 +8,8 @@ import createStore from './redux/store/store';
 
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
+import { MuiThemeProvider } from '@material-ui/core';
+import { theme } from './assets/theme';
 
 let history = createBrowserHistory();
 export const store = createStore(history);
@@ -15,7 +17,9 @@ export const store = createStore(history);
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <App />
+      <MuiThemeProvider theme={theme}>
+        <App />
+      </MuiThemeProvider>
     </ConnectedRouter>
   </Provider>,
 
