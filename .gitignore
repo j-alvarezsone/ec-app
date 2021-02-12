@@ -33,3 +33,6 @@ antigen.zsh
 # Firebase files
 firestore.rules
 src/firebase/config.js
+
+# config
+jsconfig.json
