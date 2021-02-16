@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,7 +6,7 @@ import logo from '../../assets/img/icons/JAS_logo_PNG-transparent.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { getIsSignedIn } from '../../redux/users/selectors';
 import { push } from 'connected-react-router';
-import { HeaderMenus } from '.';
+import { HeaderMenus, ClosableDrawer } from './index';
 
 const useStyles = makeStyles({
   root: {
@@ -31,24 +31,32 @@ const Header = () => {
   const selector = useSelector((state) => state);
   const dispatch = useDispatch();
   const isSignedIn = getIsSignedIn(selector);
+
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerToggle = useCallback(
+    (e) => {
+      if (e.type === 'keydown' && (e.key === 'Tab' || e.key === 'Shift')) {
+        return;
+      }
+      setOpen(!open);
+    },
+    [setOpen, open]
+  );
+
   return (
     <div className={classes.root}>
       <AppBar position='fixed' className={classes.menuBar}>
         <Toolbar className={classes.toolBar}>
-          <img
-            src={logo}
-            alt='personal logo'
-            width='128px'
-            onClick={() => dispatch(push('/'))}
-            style={{ cursor: 'pointer' }}
-          />
+          <img src={logo} alt='personal logo' width='128px' onClick={() => dispatch(push('/'))} style={{ cursor: 'pointer' }} />
           {isSignedIn && (
             <div className={classes.iconButtons}>
-              <HeaderMenus />
+              <HeaderMenus handleDrawerToggle={handleDrawerToggle} />
             </div>
           )}
         </Toolbar>
       </AppBar>
+      <ClosableDrawer open={open} onClose={handleDrawerToggle} />
     </div>
   );
 };
