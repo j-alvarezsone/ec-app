@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  TableContainer,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  IconButton,
-} from '@material-ui/core';
+import { TableContainer, Table, TableBody, TableCell, TableRow, IconButton } from '@material-ui/core';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import FavoriteBorderedIcon from '@material-ui/icons/FavoriteBorder';
 import { makeStyles } from '@material-ui/styles';
@@ -27,15 +20,15 @@ const SizeTable = (props) => {
       <Table>
         <TableBody>
           {sizes.length > 0 &&
-            sizes.map((size) => (
-              <TableRow key={size.size}>
+            sizes.map((item, i) => (
+              <TableRow key={item.size}>
                 <TableCell component='th' scope='row'>
-                  {size.size.toUpperCase()}
+                  {item.size.toUpperCase()}
                 </TableCell>
-                <TableCell>Remaining {size.quantity}</TableCell>
+                <TableCell>Remaining {item.quantity}</TableCell>
                 <TableCell className={classes.iconCell}>
-                  {size.quantity > 0 ? (
-                    <IconButton>
+                  {item.quantity > 0 ? (
+                    <IconButton onClick={() => props.addProduct(item.size)}>
                       <ShoppingCartIcon />
                     </IconButton>
                   ) : (

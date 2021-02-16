@@ -1,6 +1,8 @@
-import { signInAction, signOutAction } from './actions';
+import { signInAction, signOutAction, fetchProductsInCartAction } from './actions';
 import { push } from 'connected-react-router';
 import { auth, FirebaseTimestamp, db } from '../../firebase/index';
+
+const usersRef = db.collection('users');
 
 // check if is sign in
 export const listenAuthState = () => {
@@ -9,7 +11,7 @@ export const listenAuthState = () => {
       if (user) {
         const uid = user.uid;
 
-        db.collection('users')
+        usersRef
           .doc(uid)
           .get()
           .then((snapshot) => {
@@ -43,7 +45,7 @@ export const signIn = (email, password) => {
       if (user) {
         const uid = user.uid;
 
-        db.collection('users')
+        usersRef
           .doc(uid)
           .get()
           .then((snapshot) => {
@@ -67,12 +69,7 @@ export const signIn = (email, password) => {
 export const signUp = (username, email, password, confirmPassword) => {
   return async (dispatch) => {
     // validation
-    if (
-      username === '' ||
-      email === '' ||
-      password === '' ||
-      confirmPassword === ''
-    ) {
+    if (username === '' || email === '' || password === '' || confirmPassword === '') {
       alert('Required field are not entered');
       return false;
     }
@@ -80,32 +77,30 @@ export const signUp = (username, email, password, confirmPassword) => {
       alert('Passwords do not match. Please try again.');
       return false;
     }
-    return auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((result) => {
-        const user = result.user;
+    return auth.createUserWithEmailAndPassword(email, password).then((result) => {
+      const user = result.user;
 
-        if (user) {
-          const uid = user.uid;
-          const timeStamp = FirebaseTimestamp.now();
+      if (user) {
+        const uid = user.uid;
+        const timeStamp = FirebaseTimestamp.now();
 
-          const userInitialData = {
-            created_at: timeStamp,
-            email: email,
-            role: 'customer',
-            uid: uid,
-            updated_at: timeStamp,
-            username: username,
-          };
+        const userInitialData = {
+          created_at: timeStamp,
+          email: email,
+          role: 'customer',
+          uid: uid,
+          updated_at: timeStamp,
+          username: username,
+        };
 
-          db.collection('users')
-            .doc(uid)
-            .set(userInitialData)
-            .then(() => {
-              dispatch(push('/'));
-            });
-        }
-      });
+        usersRef
+          .doc(uid)
+          .set(userInitialData)
+          .then(() => {
+            dispatch(push('/'));
+          });
+      }
+    });
   };
 };
 
@@ -127,16 +122,28 @@ export const resetPassword = (email) => {
       auth
         .sendPasswordResetEmail(email)
         .then(() => {
-          alert(
-            'Please confirm that we have sent a password reset email to the address you entered'
-          );
+          alert('Please confirm that we have sent a password reset email to the address you entered');
           dispatch(push('/signin'));
         })
         .catch(() => {
-          alert(
-            'This is a , fail address that has not been registered. Please check it once.'
-          );
+          alert('This is a , fail address that has not been registered. Please check it once.');
         });
     }
+  };
+};
+
+export const addProductToCart = (addedProduct) => {
+  return async (dispatch, getState) => {
+    const uid = getState().users.uid;
+    const cartRef = usersRef.doc(uid).collection('cart').doc();
+    addedProduct['cartId'] = cartRef.id;
+    await cartRef.set(addedProduct);
+    dispatch(push('/'));
+  };
+};
+
+export const fetchProductsInCart = (products) => {
+  return async (dispatch) => {
+    dispatch(fetchProductsInCartAction(products));
   };
 };
